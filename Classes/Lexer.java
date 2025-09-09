@@ -26,6 +26,14 @@ public class Lexer {
                 pos++;
                 yield new Token(TokenType.RBRACE, "}");
             }
+            case '[' -> {
+                pos++;
+                yield new Token(TokenType.LBRACKET, "[");
+            }
+            case ']' -> {
+                pos++;
+                yield new Token(TokenType.RBRACKET, "]");
+            }
             case ':' -> {
                 pos++;
                 yield new Token(TokenType.COLON, ":");

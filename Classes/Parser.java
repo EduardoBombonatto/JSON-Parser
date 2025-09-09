@@ -28,9 +28,19 @@ public class Parser {
             }
         }
         eat(TokenType.RBRACE);
-        if (currentToken.type != TokenType.EOF) {
-            throw new RuntimeException("Extras tokens after the Right Brace, INVALID!");
+    }
+
+    private void parseArray(){
+        eat(TokenType.LBRACKET);
+
+        if (currentToken.type != TokenType.RBRACKET){
+            parseValue();
+            while(currentToken.type == TokenType.COMMA) {
+                eat(TokenType.COMMA);
+                parseValue();
+            }
         }
+        eat(TokenType.RBRACKET);
     }
 
     private void parsePair() {
@@ -39,14 +49,16 @@ public class Parser {
         parseValue();
     }
 
-    private void parseValue(){
+    private void parseValue() {
         switch (currentToken.type) {
             case STRING -> eat(TokenType.STRING);
             case NUMBER -> eat(TokenType.NUMBER);
             case TRUE -> eat(TokenType.TRUE);
             case FALSE -> eat(TokenType.FALSE);
             case NULL -> eat(TokenType.NULL);
-            default ->  throw new RuntimeException("Unrecognized token: " + currentToken);
+            case LBRACE -> parseObject();
+            case LBRACKET -> parseArray();
+            default -> throw new RuntimeException("Unrecognized token: " + currentToken);
         }
     }
 }

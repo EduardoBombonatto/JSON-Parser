@@ -1,34 +1,31 @@
+import Classes.Lexer;
+import Classes.Parser;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class JSONParser {
-    public static void main(String[] var0) {
-        if (var0.length != 1) {
+    public static void main(String[] args) {
+        if (args.length != 1) {
             System.err.println("Usage: java JSONParser <filename>");
             System.exit(1);
         }
 
-        String fileName = var0[0];
+        String fileName = args[0];
 
         try {
-            String file = Files.readString(Path.of(fileName)).trim();
+            String content = new String(Files.readAllBytes(Path.of(fileName)));
+            Lexer lexer = new Lexer(content);
+            Parser parser = new Parser(lexer);
+            parser.parseObject();
 
-            if (isValidJson(file)) {
-                System.out.println("Valid Json");
-                System.exit(0);
-            } else {
-                System.out.println("Invalid Json");
-                System.exit(1);
-            }
-
+            System.out.println("JSON Valido: " + content);
+            System.exit(0);
         } catch (IOException e) {
-            System.err.println("Error reading file " + fileName);
+            System.err.println("Error reading file " + e.getMessage());
             System.exit(1);
         }
     }
 
-    private static boolean isValidJson(String json) {
-        return json.equals("{}");
-    }
 }

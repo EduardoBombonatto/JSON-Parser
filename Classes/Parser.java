@@ -13,7 +13,7 @@ public class Parser {
         if (currentToken.type == type) {
             currentToken = lexer.nextToken();
         } else {
-            throw new RuntimeException("Expected: " + type + " but found: " + currentToken);
+            throw new RuntimeException("Esperado " + type + " mas encontrado " + currentToken);
         }
     }
 
@@ -36,6 +36,17 @@ public class Parser {
     private void parsePair() {
         eat(TokenType.STRING);
         eat(TokenType.COLON);
-        eat(TokenType.STRING);
+        parseValue();
+    }
+
+    private void parseValue(){
+        switch (currentToken.type) {
+            case STRING -> eat(TokenType.STRING);
+            case NUMBER -> eat(TokenType.NUMBER);
+            case TRUE -> eat(TokenType.TRUE);
+            case FALSE -> eat(TokenType.FALSE);
+            case NULL -> eat(TokenType.NULL);
+            default ->  throw new RuntimeException("Unrecognized token: " + currentToken);
+        }
     }
 }

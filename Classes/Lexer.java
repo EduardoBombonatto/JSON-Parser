@@ -35,7 +35,15 @@ public class Lexer {
                 yield new Token(TokenType.COMMA, ",");
             }
             case '"' -> stringToken();
-            default -> throw new RuntimeException("Unexpected Character: " + c);
+            default -> {
+                if (Character.isDigit(c) || c == '-') {
+                    yield numberToken();
+                } else if (Character.isLetter(c)) {
+                    yield keywordToken();
+                } else {
+                    throw new RuntimeException("Unrecognized character: " + c);
+                }
+            }
         };
     }
 
@@ -53,6 +61,43 @@ public class Lexer {
         pos++; // pula o último "
 
         return new Token(TokenType.STRING, sb.toString());
+    }
+
+    private Token numberToken() {
+        StringBuilder sb = new StringBuilder();
+
+        if (input.charAt(pos) == '-') {
+            sb.append('-');
+            pos++;
+        }
+        while (pos < input.length() && (Character.isDigit(input.charAt(pos)))) {
+            sb.append(input.charAt(pos));
+            pos++;
+        }
+        if (pos < input.length() && input.charAt(pos) == '.') {
+            sb.append('.');
+            pos++;
+            while (pos < input.length() && Character.isDigit(input.charAt(pos))) {
+                sb.append(input.charAt(pos));
+                pos++;
+            }
+        }
+        return new Token(TokenType.NUMBER, sb.toString());
+    }
+
+    private Token keywordToken() {
+        StringBuilder sb = new StringBuilder();
+        while (pos < input.length() && Character.isLetter(input.charAt(pos))) {
+            sb.append(input.charAt(pos));
+            pos++;
+        }
+        String word = sb.toString();
+        return switch (word) {
+            case "true" -> new Token(TokenType.TRUE, "true");
+            case "false" -> new Token(TokenType.FALSE, "false");
+            case "null" -> new Token(TokenType.NULL, "null");
+            default -> throw new RuntimeException("Unrecognized word: " + word);
+        };
     }
 
     private void skipWhitespace() {

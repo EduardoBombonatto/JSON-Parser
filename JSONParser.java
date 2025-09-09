@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class JSONParser {
     public static void main(String[] args) {
@@ -8,8 +10,18 @@ public class JSONParser {
         }
         String filename = args[0];
 
-        File file = new File(filename);
-        System.out.println(file.length());
-        return;
+        try {
+            File file = new File(filename);
+            Scanner reader = new Scanner(file);
+
+            while(reader.hasNextLine()){
+                String data = reader.nextLine();
+                if(data.equals("{}")) System.out.println(0);
+                else System.out.println(1);
+            }
+        } catch (FileNotFoundException e){
+            System.err.println("File not found: " + filename);
+            System.exit(1);
+        }
     }
 }
